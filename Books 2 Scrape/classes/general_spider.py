@@ -1,16 +1,17 @@
-from selenium import webdriver
-from bs4 import BeautifulSoup
-from lxml import etree
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from fake_useragent import UserAgent
-from colorama import Fore, Back, Style
+import json
+import os
+import shutil
+import time
+
 import pandas as pd
 import requests
-import os
-import time
-import shutil
-import json
+from bs4 import BeautifulSoup
+from colorama import Fore, Style
+from fake_useragent import UserAgent
+from lxml import etree
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 SMALL_DELAY = 1
 MEDIUM_DELAY = 3
@@ -26,7 +27,7 @@ class GeneralSpider:
         self.error_msg = "[" + Fore.RED + "Error" + Style.RESET_ALL + "] "
         self.error_details_msg = "[" + Fore.RED + "Details" + Style.RESET_ALL + "] "
         self.keywords = keywords.replace(" ", "-")
-        self.target_website = TARGET_WEBSITE
+        self.TARGET_WEBSITE = TARGET_WEBSITE
         self.output_data_json_filename = f"{self.keywords}-dataset-1.json".lower()
         self.output_data_csv_filename = f"{self.keywords}-dataset-1.csv".lower()
         self.output_data_dir = "output/data"
@@ -37,7 +38,7 @@ class GeneralSpider:
         self.set_driver_options()
         self.driver = webdriver.Chrome(self.driver_path, chrome_options=self.opts)
         self.driver.implicitly_wait(10)
-        self.driver.get(self.target_website)
+        self.driver.get(self.TARGET_WEBSITE)
         self.page_source = self.get_page_source()
         self.soup = None
         self.set_soup_obj()
@@ -113,7 +114,7 @@ class GeneralSpider:
                 user_agent = self.driver.execute_script("return navigator.userAgent")
 
                 product_data_dict["key_1"] = "".join(self.dom.xpath(element_1)).replace("\\n",
-                                                                                                       "").strip() if len(
+                                                                                        "").strip() if len(
                     "".join(self.dom.xpath(element_1))) != 0 else "Not Found"
 
                 image_element = self.soup.find_all("img", {"<attribute>": "<selector>"})
@@ -217,5 +218,3 @@ class GeneralSpider:
                 cleaned_output_data_dict[key] = value
 
         return cleaned_output_data_dict
-
-
