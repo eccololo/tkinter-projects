@@ -4,6 +4,10 @@
 
 from tkinter import *
 from tkinter.ttk import Label, Button, Entry
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 def calc_equation():
@@ -46,6 +50,7 @@ def reset():
     output["text"] = "x = ?"
     label_msg["text"] = "Message:"
 
+
 root = Tk()
 root.title("Quadratic Equation Root.")
 root.minsize(height=200, width=350)
@@ -86,5 +91,30 @@ label_msg.config(padding=10)
 
 reset_btn = Button(text="Reset", command=reset)
 reset_btn.grid(column=0, row=4, columnspan=4)
+
+fig = plt.figure(figsize=(5, 3))
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.draw()
+canvas.get_tk_widget().grid(row=0, column=4, columnspan=4, rowspan=4, ipadx=40, ipady=44)
+
+x_label = ["x"]
+y_label = ["y"]
+plt.bar(x=x_label, height=y_label)
+
+x_cor = []
+y_cor = []
+
+user_input_a = -5
+user_input_b = 15
+user_input_c = 3
+
+for x in range(-50, 50, 1):
+    y = user_input_a * x ** 2 + user_input_b * x + user_input_c
+    x_cor.append(x)
+    y_cor.append(y)
+    # x= x+1
+
+axes = fig.add_subplot(111)
+axes.plot(x_cor, y_cor)
 
 root.mainloop()
