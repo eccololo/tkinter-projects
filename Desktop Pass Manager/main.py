@@ -21,7 +21,7 @@ def check_for_duplicates(**kwargs):
 
     cleaned = list(map(lambda x: x.replace("\n", ""), data))
     for item in cleaned:
-        if www in item and login in item:
+        if www in item and login in item and len(item) > 0:
             return True
 
     return False
