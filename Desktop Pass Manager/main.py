@@ -120,7 +120,7 @@ def add_pass():
         duplicate_proceed = messagebox.askyesno(title="Duplicated Detected!",
                                                 message="This website address and login are already in database. Do you want to update your pass?")
 
-    if is_duplicates:
+    if duplicate_proceed:
         override_pass(www=www, login=login, password=password)
         messagebox.showinfo(title="Success!", message="Password updated!")
         clear_entries_labels()
