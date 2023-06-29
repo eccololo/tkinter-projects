@@ -6,6 +6,8 @@ from random import randint, shuffle, choice
 import pyperclip
 import re
 
+DB_PASS_FILE_PATH = "./pass-data.txt"
+
 
 # ---------------------------- UTILITIES ------------------------------- #
 
@@ -138,8 +140,6 @@ def add_pass():
                 clear_entries_labels()
                 playsound("./ping.mp3")
 
-
-DB_PASS_FILE_PATH = "./pass-data.txt"
 
 root = Tk()
 root.title("Desktop Pass Manager")
