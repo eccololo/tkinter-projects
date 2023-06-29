@@ -7,6 +7,13 @@ import pyperclip
 import re
 
 
+def clear_entries_labels():
+    """This is helper function that clear entries and labels from values."""
+    entry_www.delete(0, END)
+    entry_pass.delete(0, END)
+    label_copied.config(text="")
+
+
 # ---------------------------- DATA VALIDATION ------------------------------- #
 
 def validate_data(**kwargs):
