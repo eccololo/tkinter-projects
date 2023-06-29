@@ -7,6 +7,24 @@ import pyperclip
 import re
 
 
+# ---------------------------- UTILITIES ------------------------------- #
+
+def check_for_duplicates(**kwargs):
+    """This function checks if typed by user www and login already exists in DB."""
+    www = kwargs["www"]
+    login = kwargs["login"]
+
+    with open(DB_PASS_FILE_PATH, "r") as f:
+        data = f.readlines()
+
+    cleaned = list(map(lambda x: x.replace("\n", ""), data))
+    for item in cleaned:
+        if www in item and login in item:
+            return True
+
+    return False
+
+
 def override_pass(**kwargs):
     """This function update user password if duplicate entry is detected if user wants to."""
     www = kwargs["www"]
