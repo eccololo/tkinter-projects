@@ -1,5 +1,12 @@
 from tkinter import *
 from tkinter.ttk import *
+from tkinter import messagebox
+from playsound import playsound
+from random import randint, shuffle, choice
+import pyperclip
+import re
+
+DB_PASS_FILE_PATH = "./pass-data.txt"
 
 root = Tk()
 root.title("Desktop Pass Manager")
