@@ -7,6 +7,33 @@ import pyperclip
 import re
 
 
+def override_pass(**kwargs):
+    """This function update user password if duplicate entry is detected if user wants to."""
+    www = kwargs["www"]
+    login = kwargs["login"]
+    password = kwargs["password"]
+    output = ""
+
+    with open(DB_PASS_FILE_PATH, "r") as f:
+        data = f.readlines()
+
+    cleaned = list(map(lambda x: x.replace("\n", ""), data))
+    for item in cleaned:
+        if len(item) > 0:
+            splitted = item.split("|")
+            db_www = splitted[0].strip()
+            db_login = splitted[1].strip()
+            db_pass = splitted[2].strip()
+            if db_www == www and db_login == login:
+                db_pass = password
+                output += f"{db_www} | {db_login} | {db_pass}\n"
+            else:
+                output += f"{db_www} | {db_login} | {db_pass}\n"
+
+    with open(DB_PASS_FILE_PATH, "w") as f:
+        f.write(output)
+
+
 def clear_entries_labels():
     """This is helper function that clear entries and labels from values."""
     entry_www.delete(0, END)
