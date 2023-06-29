@@ -7,6 +7,28 @@ import pyperclip
 import re
 
 
+# ---------------------------- DATA VALIDATION ------------------------------- #
+
+def validate_data(**kwargs):
+    """This function checks the corectness of entered by user data."""
+    pattern_www = "[a-zA-Z0-9]+\\.[a-zA-Z0-9]{2,5}"
+
+    if len(kwargs["www"]) == 0:
+        messagebox.showwarning(title="Website Empty!", message="Website address cannot be empty!")
+        return False
+    elif not re.match(pattern_www, kwargs["www"]):
+        messagebox.showwarning(title="Wrong Website!", message="Website address is incorrect!")
+        return False
+    elif len(kwargs["login"]) == 0:
+        messagebox.showwarning(title="Login Empty!", message="Login cannot be empty!")
+        return False
+    elif len(kwargs["password"]) == 0:
+        messagebox.showwarning(title="Password Empty!", message="Password cannot be empty!")
+        return False
+
+    return True
+
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def gen_pass():
     """This function generate strong password."""
