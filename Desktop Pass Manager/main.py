@@ -30,6 +30,41 @@ def gen_pass():
     label_copied.config(text="Copied!")
 
 
+# ---------------------------- SAVE PASSWORD ------------------------------- #
+def add_pass():
+    """This function saves enetred data by user to DB like www, login and password."""
+    www = entry_www.get()
+    login = entry_login.get()
+    password = entry_pass.get()
+
+    duplicate_proceed = False
+    is_duplicates = check_for_duplicates(www=www, login=login)
+
+    if is_duplicates:
+        duplicate_proceed = messagebox.askyesno(title="Duplicated Detected!",
+                                                message="This website address and login are already in database. Do you want to update your pass?")
+
+    if is_duplicates:
+        override_pass(www=www, login=login, password=password)
+        messagebox.showinfo(title="Success!", message="Password updated!")
+        clear_entries_labels()
+
+    elif not duplicate_proceed:
+        is_data_ok = validate_data(www=www, login=login, password=password)
+
+        if is_data_ok:
+
+            is_ok = messagebox.askokcancel(title=www, message=f"Details:\nlogin: {login}\npassword: {password}\n"
+                                                              f"Is it ok to save?")
+
+            if is_ok:
+                with open(DB_PASS_FILE_PATH, "a") as f:
+                    f.write(f"{www} | {login} | {password}\n")
+
+                clear_entries_labels()
+                playsound("./ping.mp3")
+
+
 DB_PASS_FILE_PATH = "./pass-data.txt"
 
 root = Tk()
