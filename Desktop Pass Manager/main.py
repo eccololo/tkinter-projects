@@ -21,7 +21,11 @@ def check_for_duplicates(**kwargs):
 
     cleaned = list(map(lambda x: x.replace("\n", ""), data))
     for item in cleaned:
-        if www in item and login in item and len(item) > 0:
+        item = item.replace(" ", "").strip()
+        splitted = item.split("|")
+        db_www = splitted[0]
+        db_login = splitted[1]
+        if www == db_www and login == db_login:
             return True
 
     return False
