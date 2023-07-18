@@ -6,6 +6,7 @@ from random import randint, shuffle, choice
 import pyperclip
 import re
 import json
+import os
 from json.decoder import JSONDecodeError
 from playsound import PlaysoundException
 
@@ -13,21 +14,27 @@ DB_PASS_FILE_PATH = "./pass-data.json"
 
 
 # ---------------------------- UTILITIES ------------------------------- #
-
-def check_for_duplicates(**kwargs):
-    """This function checks if typed by user www and login already exists in DB."""
-    www = kwargs["www"]
-    login = kwargs["login"]
-    data = None
+def handle_json_decode_error(mode):
+    """This function is made for handling error that occurs when I try to open an empty JSON file."""
     file = None
-
+    data = []
     try:
-        file = open(DB_PASS_FILE_PATH, "r")
+        file = open(DB_PASS_FILE_PATH, mode)
         data = json.load(file)
     except JSONDecodeError:
         pass
     finally:
         file.close()
+
+    return data
+
+
+def check_for_duplicates(**kwargs):
+    """This function checks if typed by user www and login already exists in DB."""
+    www = kwargs["www"]
+    login = kwargs["login"]
+
+    data = handle_json_decode_error("r")
 
     for item in data:
         data_www = list(item.keys())[0]
@@ -132,8 +139,7 @@ def add_pass():
     login = entry_login.get()
     password = entry_pass.get()
 
-    with open(DB_PASS_FILE_PATH) as f:
-        data_dict = json.load(f)
+    data_dict = handle_json_decode_error("r")
 
     if type(data_dict) is dict:
         data_dict = [data_dict]
@@ -177,10 +183,26 @@ def add_pass():
                     pass
 
 
+# ---------------------------- INIT ------------------------------- #
+
+def initialize_db_file():
+    """This function creates a DB file if it is not created yet."""
+    file = None
+    if not os.path.exists(DB_PASS_FILE_PATH):
+        try:
+            file = open(DB_PASS_FILE_PATH, "w")
+        except JSONDecodeError:
+            pass
+        finally:
+            file.close()
+
+
 root = Tk()
 root.title("Desktop Pass Manager")
 root.geometry("520x400")
 root.config(pady=50, padx=50)
+
+initialize_db_file()
 
 canvas = Canvas(root, width=200, height=200)
 logo_image = PhotoImage(file="./logo.png")
