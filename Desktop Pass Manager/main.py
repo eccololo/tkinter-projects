@@ -14,7 +14,7 @@ DB_PASS_FILE_PATH = "./pass-data.json"
 
 
 # ---------------------------- UTILITIES ------------------------------- #
-def handle_json_decode_error(mode):
+def handle_json_decode_error_and_return_data(mode):
     """This function is made for handling error that occurs when I try to open an empty JSON file."""
     file = None
     data = []
@@ -34,7 +34,7 @@ def check_for_duplicates(**kwargs):
     www = kwargs["www"]
     login = kwargs["login"]
 
-    data = handle_json_decode_error("r")
+    data = handle_json_decode_error_and_return_data("r")
 
     for item in data:
         data_www = list(item.keys())[0]
@@ -76,8 +76,17 @@ def override_pass(**kwargs):
                 }
             })
 
-    with open(DB_PASS_FILE_PATH, "w") as f:
-        json.dump(output, f, indent=4)
+    file = None
+    try:
+        file = open(DB_PASS_FILE_PATH, "w")
+        json.dump(output, file, indent=4)
+        playsound("./ping.mp3")
+    except PlaysoundException:
+        pass
+    except FileNotFoundError:
+        pass
+    finally:
+        file.close()
 
 
 def clear_entries_labels():
@@ -139,7 +148,7 @@ def add_pass():
     login = entry_login.get()
     password = entry_pass.get()
 
-    data_dict = handle_json_decode_error("r")
+    data_dict = handle_json_decode_error_and_return_data("r")
 
     if type(data_dict) is dict:
         data_dict = [data_dict]
@@ -158,7 +167,7 @@ def add_pass():
         duplicate_proceed = messagebox.askyesno(title="Duplicated Detected!",
                                                 message="This website address and login are already in database. Do you want to update your pass?")
 
-    if is_duplicates:
+    if duplicate_proceed:
         override_pass(www=www, login=login, password=password)
         messagebox.showinfo(title="Success!", message="Password updated!")
         clear_entries_labels()
