@@ -18,20 +18,25 @@ def check_for_duplicates(**kwargs):
     """This function checks if typed by user www and login already exists in DB."""
     www = kwargs["www"]
     login = kwargs["login"]
+    data = None
+    file = None
 
-    with open(DB_PASS_FILE_PATH, "r") as f:
-        data = f.readlines()
+    try:
+        file = open(DB_PASS_FILE_PATH, "r")
+        data = json.load(file)
+    except JSONDecodeError:
+        pass
+    finally:
+        file.close()
 
-    cleaned = list(map(lambda x: x.replace("\n", ""), data))
-    for item in cleaned:
-        item = item.replace(" ", "").strip()
-        splitted = item.split("|")
-        db_www = splitted[0]
-        db_login = splitted[1]
-        if www == db_www and login == db_login:
+    for item in data:
+        data_www = list(item.keys())[0]
+        data_login = item[data_www]['login']
+        if www in data_www and login in data_login:
             return True
 
     return False
+
 
 
 def override_pass(**kwargs):
