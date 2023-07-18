@@ -5,8 +5,11 @@ from playsound import playsound
 from random import randint, shuffle, choice
 import pyperclip
 import re
+import json
+from json.decoder import JSONDecodeError
+from playsound import PlaysoundException
 
-DB_PASS_FILE_PATH = "./pass-data.txt"
+DB_PASS_FILE_PATH = "./pass-data.json"
 
 
 # ---------------------------- UTILITIES ------------------------------- #
