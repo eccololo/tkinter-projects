@@ -132,6 +132,19 @@ def add_pass():
     login = entry_login.get()
     password = entry_pass.get()
 
+    with open(DB_PASS_FILE_PATH) as f:
+        data_dict = json.load(f)
+
+    if type(data_dict) is dict:
+        data_dict = [data_dict]
+
+    data_dict.append({
+        www: {
+            "login": login,
+            "password": password
+        }
+    })
+
     duplicate_proceed = False
     is_duplicates = check_for_duplicates(www=www, login=login)
 
@@ -139,7 +152,7 @@ def add_pass():
         duplicate_proceed = messagebox.askyesno(title="Duplicated Detected!",
                                                 message="This website address and login are already in database. Do you want to update your pass?")
 
-    if duplicate_proceed:
+    if is_duplicates:
         override_pass(www=www, login=login, password=password)
         messagebox.showinfo(title="Success!", message="Password updated!")
         clear_entries_labels()
@@ -153,11 +166,15 @@ def add_pass():
                                                               f"Is it ok to save?")
 
             if is_ok:
-                with open(DB_PASS_FILE_PATH, "a") as f:
-                    f.write(f"{www} | {login} | {password}\n")
+                with open(DB_PASS_FILE_PATH, "w") as f:
+                    json.dump(data_dict, f, indent=4)
 
                 clear_entries_labels()
-                playsound("./ping.mp3")
+
+                try:
+                    playsound("./ping.mp3")
+                except PlaysoundException:
+                    pass
 
 
 root = Tk()
