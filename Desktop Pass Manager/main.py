@@ -29,6 +29,24 @@ def handle_json_decode_error_and_return_data(mode):
     return data
 
 
+def search_and_return_data_entry():
+    """This function searches for data entry by user www input and returns info about login and pass."""
+    www = entry_www.get()
+    found = False
+    data = handle_json_decode_error_and_return_data("r")
+
+    for item in data:
+        data_www = list(item.keys())[0]
+        data_login = item[data_www]['login']
+        data_pass = item[data_www]['password']
+        if www == data_www:
+            found = True
+            messagebox.showinfo(title="Success!", message=f"Login: {data_login}\nPassword: {data_pass}")
+
+    if not found:
+        messagebox.showinfo(title="Failed!", message=f"No data in DB for this website. Sorry.")
+
+
 def check_for_duplicates(**kwargs):
     """This function checks if typed by user www and login already exists in DB."""
     www = kwargs["www"]
@@ -230,9 +248,12 @@ label_pass.grid(row=3, column=0)
 label_copied = Label(root, text="")
 label_copied.grid(row=3, column=3)
 
-entry_www = Entry(root, width=48)
+entry_www = Entry(root, width=34)
 entry_www.focus()
-entry_www.grid(row=1, column=1, columnspan=2)
+entry_www.grid(row=1, column=1)
+
+btn_search = Button(root, text="Search", command=search_and_return_data_entry)
+btn_search.grid(row=1, column=2)
 
 entry_login = Entry(root, width=48)
 entry_login.insert(0, "mateusz@gmail.com")
