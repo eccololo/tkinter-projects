@@ -1,0 +1,32 @@
+[
+    {
+        "udemy.com": {
+            "login": "mateusz@gmail.com",
+            "password": "5WeRG+2SRLr8y(D3("
+        }
+    },
+    {
+        "mbank.pl": {
+            "login": "mateusz@gmail.com",
+            "password": "mY7)W4lJk$%R0D#j8lZ"
+        }
+    },
+    {
+        "olx.pl": {
+            "login": "mateusz@gmail.com",
+            "password": "maPHpS7e(8Z($68"
+        }
+    },
+    {
+        "inteligo.pl": {
+            "login": "mateusz@gmail.com",
+            "password": "U()4)z4%K3JYbam2"
+        }
+    },
+    {
+        "alibaba.com": {
+            "login": "mateusz@gmail.com",
+            "password": "55555"
+        }
+    }
+]
