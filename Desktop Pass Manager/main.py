@@ -252,7 +252,7 @@ entry_www = Entry(root, width=34)
 entry_www.focus()
 entry_www.grid(row=1, column=1)
 
-btn_search = Button(root, text="Search", command=search_and_return_data_entry)
+btn_search = Button(root, text="Search", command=search_and_return_data_entry, width=13)
 btn_search.grid(row=1, column=2)
 
 entry_login = Entry(root, width=48)
@@ -262,7 +262,7 @@ entry_login.grid(row=2, column=1, columnspan=2)
 entry_pass = Entry(root, width=34)
 entry_pass.grid(row=3, column=1)
 
-btn_pass = Button(root, text="Generate Pass", command=gen_pass)
+btn_pass = Button(root, text="Generate Pass", command=gen_pass, width=13)
 btn_pass.grid(row=3, column=2)
 
 btn_add = Button(root, text="Add", command=add_pass, width=48)
