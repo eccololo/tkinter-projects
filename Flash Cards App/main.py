@@ -8,6 +8,7 @@ import random
 import csv
 import sys
 
+
 # ===================== Data ====================
 def return_question_answer_from_data_set():
     """This function gets next question and answer from data-set file and returns it."""
@@ -149,6 +150,7 @@ def count_down(root):
     global TIMER
     flip_to_answer_partial = partial(flip_to_answer, root)
     TIMER = root.after(COUNT_DOWN_TIME, flip_to_answer_partial)
+
 
 root = Tk()
 root.title("Flash Cards App")
