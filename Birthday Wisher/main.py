@@ -1,8 +1,5 @@
 # TODO:
 #    1. Zrobić GUI:
-#    1.1 Dodać Input dla email_to
-#    1.2 Dodać Input dla password
-#    1.3 Dodać przycisk send
 #    1.4 Dodać Input dla imienia do dodania do DB
 #    1.5 Dodać Input dla emailu_to do dodania do DB
 #    1.6 Dodać Input dla daty urodzenia do dodania dla DB
@@ -19,15 +16,14 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
 from playsound import playsound
+from functools import partial
 
 BIRTHDAY_FILE = "./birthdays.csv"
 LETTERS_DIR = "./assets/letter_templates"
 HOST = "smtp.gmail.com"
-APP_PASS = ""
-EMAIL_FROM = "mateusz.hyla.ff@gmail.com"
 WINDOW_WIDTH = 1120
 WINDOW_HEIGHT = 550
-CANVAS_BG_COLOR = "#ff6600"
+FILLER_BG_COLOR = "#ff6600"
 
 
 # =============== FUNCTIONS ==========================
@@ -63,9 +59,15 @@ def get_birthday_data(file_path):
     return recipients_data
 
 
-def send_birthday_wishes_to_all(recipients_data, host):
+def send_birthday_wishes_to_all(recipients_data):
     """This function sends email birthday wishes to all recipients."""
 
+    global HOST
+    app_pass = app_pass_entry.get()
+    email_from = email_from_entry.get()
+    # FIXME:
+    #    1. Zrobic tak aby use mogl tez podac email i do niego tez wysle sie emaila.
+    email_to_add = email_to_entry.get()
     for idx, recipient in enumerate(recipients_data):
         idx += 1
         email_to = recipient[1]
@@ -76,11 +78,11 @@ def send_birthday_wishes_to_all(recipients_data, host):
         message = get_letter_content(LETTERS_DIR).replace("[NAME]", name_to)
         subject = f"Happy birthday! It has been {recipient_age} :-)"
 
-        with smtplib.SMTP(host) as conn:
+        with smtplib.SMTP(HOST) as conn:
             conn.starttls()
-            conn.login(user=EMAIL_FROM, password=APP_PASS)
+            conn.login(user=email_from, password=app_pass)
             try:
-                conn.sendmail(from_addr=EMAIL_FROM,
+                conn.sendmail(from_addr=email_from,
                               to_addrs=email_to,
                               msg=f"Subject:{subject}\n\n"
                                   f"{message}.")
@@ -109,6 +111,10 @@ def center_the_project_window(w_root):
     w_root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
+def send_birthday_wishes_email():
+    pass
+
+
 # =============== GUI ==========================
 root = Tk()
 root.title("Flash Cards App")
@@ -116,17 +122,52 @@ center_the_project_window(root)
 root.config(pady=40, padx=40)
 root.configure(bg='#ff6600')
 
-# Logo
-canvas = Canvas(root, width=345, height=455, bg=CANVAS_BG_COLOR, highlightthickness=0)
-bw_logo = PhotoImage(file="./assets/images/test_1.png")
-canvas.create_image(175, 235, image=bw_logo)
-canvas.grid(column=0, row=0)
+# # Logo
+# canvas = Canvas(root, width=305, height=455, bg=FILLER_BG_COLOR, highlightthickness=0)
+# bw_logo = PhotoImage(file="./assets/images/test_1.png")
+# canvas.create_image(145, 235, image=bw_logo)
+# canvas.grid(column=0, row=0, rowspan=5)
+#
+# # Vertical Line 1
+# liner_1 = Canvas(root, width=50, height=200, bg=FILLER_BG_COLOR, highlightthickness=0)
+# liner_img_1 = PhotoImage(file="./assets/images/liner.png")
+# liner_1.create_image(40, 200, image=liner_img_1)
+# liner_1.grid(column=1, row=0, rowspan=5)
+
+# Send
+send_label = Label(root, text="SEND", font=("Arial", 24, "bold"), background=FILLER_BG_COLOR)
+send_label.grid(row=0, column=1, padx=40, pady=15)
+
+email_to_label = Label(root, text="To:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
+email_to_label.grid(row=1, column=0, pady=5)
+email_to_entry = Entry(width=35)
+email_to_entry.grid(row=1, column=1, padx=10, pady=5, ipady=6)
+
+email_from_label = Label(root, text="From:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
+email_from_label.grid(row=2, column=0, pady=5)
+email_from_entry = Entry(width=35)
+email_from_entry.grid(row=2, column=1, padx=10, pady=5, ipady=6)
+
+app_pass_label = Label(root, text="Pass:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
+app_pass_label.grid(row=3, column=0, pady=5)
+app_pass_entry = Entry(width=35, show="*")
+app_pass_entry.grid(row=3, column=1, padx=10, pady=5, ipady=6)
+
+btn_style = Style()
+btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
+                    background="#01d1ff", highlightthickness=0)
+
+recipients_data = get_birthday_data(BIRTHDAY_FILE)
+send_birthday_wishes_to_all = partial(send_birthday_wishes_to_all, recipients_data)
+send_btn = Button(text="Send", command=send_birthday_wishes_to_all, width=13, style="Action.TButton")
+send_btn.grid(row=4, column=1, ipady=7, ipadx=7, pady=20)
 
 # Vertical Line 1
+liner_1 = Canvas(root, width=50, height=200, bg=FILLER_BG_COLOR, highlightthickness=0)
+liner_img_1 = PhotoImage(file="./assets/images/liner.png")
+liner_1.create_image(40, 200, image=liner_img_1)
+liner_1.grid( row=0, column=2, rowspan=5)
 
-# =============== MAIN ==========================
-# recipients_data = get_birthday_data(BIRTHDAY_FILE)
-# send_birthday_wishes_to_all(recipients_data, HOST)
 
 
 root.mainloop()
