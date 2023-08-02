@@ -1,10 +1,4 @@
 # TODO:
-#    1. Zrobić GUI:
-#    1.4 Dodać Input dla imienia do dodania do DB
-#    1.5 Dodać Input dla emailu_to do dodania do DB
-#    1.6 Dodać Input dla daty urodzenia do dodania dla DB
-#    1.6.1 Dodac przycisk add dodajacy dane do DB.
-#    1.7 Dodać canvas i logo na środku canvas.
 #    1.8 Dodac image Ajax kiedy wysyłamy email.
 
 import datetime as dt
@@ -22,7 +16,7 @@ from functools import partial
 BIRTHDAY_FILE = "./birthdays.csv"
 LETTERS_DIR = "./assets/letter_templates"
 HOST = "smtp.gmail.com"
-WINDOW_WIDTH = 1120
+WINDOW_WIDTH = 920
 WINDOW_HEIGHT = 550
 FILLER_BG_COLOR = "#ff6600"
 
@@ -249,35 +243,29 @@ root.config(pady=40, padx=40)
 root.configure(bg='#ff6600')
 
 # # Logo
-# canvas = Canvas(root, width=305, height=455, bg=FILLER_BG_COLOR, highlightthickness=0)
-# bw_logo = PhotoImage(file="./assets/images/test_1.png")
-# canvas.create_image(145, 235, image=bw_logo)
-# canvas.grid(column=0, row=0, rowspan=5)
-#
-# # Vertical Line 1
-# liner_1 = Canvas(root, width=50, height=200, bg=FILLER_BG_COLOR, highlightthickness=0)
-# liner_img_1 = PhotoImage(file="./assets/images/liner.png")
-# liner_1.create_image(40, 200, image=liner_img_1)
-# liner_1.grid(column=1, row=0, rowspan=5)
+canvas = Canvas(root, width=60, height=60, bg=FILLER_BG_COLOR, highlightthickness=0)
+bw_logo = PhotoImage(file="./assets/images/bw_logo_small.png")
+canvas.create_image(40, 40, image=bw_logo)
+canvas.grid(column=0, row=0, columnspan=6)
 
 # Send
 send_label = Label(root, text="SEND", font=("Arial", 24, "bold"), background=FILLER_BG_COLOR)
-send_label.grid(row=0, column=1, padx=40, pady=15)
+send_label.grid(row=1, column=2, padx=40, pady=15)
 
 email_to_label = Label(root, text="To:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
-email_to_label.grid(row=1, column=0, pady=5)
+email_to_label.grid(row=2, column=1, pady=5)
 email_to_entry = Entry(width=35)
-email_to_entry.grid(row=1, column=1, padx=10, pady=5, ipady=6)
+email_to_entry.grid(row=2, column=2, padx=10, pady=5, ipady=6)
 
 email_from_label = Label(root, text="From:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
-email_from_label.grid(row=2, column=0, pady=5)
+email_from_label.grid(row=2, column=1, pady=5)
 email_from_entry = Entry(width=35)
-email_from_entry.grid(row=2, column=1, padx=10, pady=5, ipady=6)
+email_from_entry.grid(row=3, column=2, padx=10, pady=5, ipady=6)
 
 app_pass_label = Label(root, text="Pass:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
-app_pass_label.grid(row=3, column=0, pady=5)
+app_pass_label.grid(row=4, column=1, pady=5)
 app_pass_entry = Entry(width=35, show="*")
-app_pass_entry.grid(row=3, column=1, padx=10, pady=5, ipady=6)
+app_pass_entry.grid(row=4, column=2, padx=10, pady=5, ipady=6)
 
 btn_style = Style()
 btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
@@ -286,39 +274,39 @@ btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#0
 recipients_data = get_birthday_data(BIRTHDAY_FILE)
 send_birthday_wishes_to_all = partial(send_birthday_wishes_to_all, recipients_data)
 send_btn = Button(text="Send", command=send_birthday_wishes_to_all, width=13, style="Action.TButton")
-send_btn.grid(row=4, column=1, ipady=7, ipadx=7, pady=20)
+send_btn.grid(row=5, column=2, ipady=7, ipadx=7, pady=20)
 
-# Vertical Line 1
-liner_1 = Canvas(root, width=50, height=200, bg=FILLER_BG_COLOR, highlightthickness=0)
-liner_img_1 = PhotoImage(file="./assets/images/liner.png")
-liner_1.create_image(40, 200, image=liner_img_1)
-liner_1.grid(row=0, column=2, rowspan=5, padx=(10, 45))
+# Vertical Line 2
+liner_2 = Canvas(root, width=50, height=200, bg=FILLER_BG_COLOR, highlightthickness=0)
+liner_img_2 = PhotoImage(file="./assets/images/liner.png")
+liner_2.create_image(40, 200, image=liner_img_2)
+liner_2.grid(row=1, column=3, rowspan=5, padx=(10, 45))
 
 # Add
 add_label = Label(root, text="Add", font=("Arial", 24, "bold"), background=FILLER_BG_COLOR)
-add_label.grid(row=0, column=4, padx=40, pady=15)
+add_label.grid(row=1, column=5, padx=40, pady=15)
 
 email_add_to_label = Label(root, text="To:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
-email_add_to_label.grid(row=1, column=3, pady=5)
+email_add_to_label.grid(row=2, column=4, pady=5)
 email_add_to_entry = Entry(width=35)
-email_add_to_entry.grid(row=1, column=4, padx=10, pady=5, ipady=6)
+email_add_to_entry.grid(row=2, column=5, padx=10, pady=5, ipady=6)
 
 email_name_label = Label(root, text="Name:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
-email_name_label.grid(row=2, column=3, pady=5)
+email_name_label.grid(row=3, column=4, pady=5)
 email_name_entry = Entry(width=35)
-email_name_entry.grid(row=2, column=4, padx=10, pady=5, ipady=6)
+email_name_entry.grid(row=3, column=5, padx=10, pady=5, ipady=6)
 
 app_dob_label = Label(root, text="DOB:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
-app_dob_label.grid(row=3, column=3, pady=5)
+app_dob_label.grid(row=4, column=4, pady=5)
 app_dob_entry = Entry(width=35)
 app_dob_entry.insert(0, "dd/mm/yyyy")
-app_dob_entry.grid(row=3, column=4, padx=10, pady=5, ipady=6)
+app_dob_entry.grid(row=4, column=5, padx=10, pady=5, ipady=6)
 
 btn_style = Style()
 btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
                     background="#01d1ff", highlightthickness=0)
 
 add_btn = Button(text="Add", command=add_recipient_to_db, width=13, style="Action.TButton")
-add_btn.grid(row=4, column=4, ipady=7, ipadx=7, pady=20)
+add_btn.grid(row=5, column=5, ipady=7, ipadx=7, pady=20)
 
 root.mainloop()
