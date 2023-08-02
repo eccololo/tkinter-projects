@@ -1,5 +1,8 @@
 # TODO:
-#    1.8 Dodac image Ajax kiedy wysyłamy email.
+#    1. Dodać sprawdzenie czy jak dodajemy nowego recipienta to czy nie ma go już w DB.
+#       Jesli jest to go nie dodajemy.
+#    2. Zobaczyć jak dodać tooltips do checkboxa np.
+#    3. Dodać efekty dźwiękowe do przycisków.
 
 import datetime as dt
 import random
@@ -12,7 +15,6 @@ from tkinter.ttk import *
 from tkinter import messagebox
 from playsound import playsound
 from functools import partial
-from time import sleep
 
 BIRTHDAY_FILE = "./birthdays.csv"
 LETTERS_DIR = "./assets/letter_templates"
@@ -32,11 +34,16 @@ def get_letter_content(letters_dir_path):
     file_path = os.path.join(letters_dir_path, file_name)
 
     with open(file_path, "r") as f:
-        return f.read()
+        data = f.read()
+
+    return data
 
 
 def get_birthday_data(file_path):
     """This function returns True if there is someones birthday."""
+    # FIXME:
+    #    1. Ta metoda sprawia problemy. Playsound zwraca problem z powodu tej funkcji.
+    #       Dodać otwiranie pliku csv z with.
     day = dt.datetime.now().day
     month = dt.datetime.now().month
     recipients_data = []
@@ -70,18 +77,18 @@ def send_birthday_wishes_to_all(recipients_data):
             year_to = recipient[2]
             recipient_age = dt.datetime.now().year - year_to
             print(f"Sending email {idx}...")
-            send_email(email_to, email_from, app_pass, name_to, recipient_age)
+            send_email(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
     else:
         print(f"Sending email ...")
         send_email(email_to, email_from, app_pass)
 
 
-def send_email(email_to, email_from, app_pass, name="Friend", year="long time"):
+def send_email(email_to, email_from, app_pass, name="Friend", year="long time", idx=""):
     """This function sends one email to recipient."""
     message = get_letter_content(LETTERS_DIR).replace("[NAME]", name)
     subject = f"Happy birthday! It has been {year} :-)"
     try:
-        ajax_label_txt.config(text="Working...")
+        ajax_label_txt.config(text=f"[{idx}] Working...")
         root.update()
         with smtplib.SMTP(HOST) as conn:
             conn.starttls()
@@ -94,14 +101,15 @@ def send_email(email_to, email_from, app_pass, name="Friend", year="long time"):
         print(f"Email not sent. Something went wrong with sending email.")
         print(f"Error message: {err_msg}")
         print("-" * 7)
+        ajax_label_txt.config(text=f"[{idx}] Failed ...")
     else:
         print(f"Email sent successfuly.")
+        ajax_label_txt.config(text=f"[{idx}] Success ...")
 
     finally:
         email_to_entry.delete(0, END)
         email_from_entry.delete(0, END)
         app_pass_entry.delete(0, END)
-        ajax_label_txt.config(text="")
 
 
 def center_the_project_window(w_root):
@@ -252,6 +260,11 @@ def is_name_entry_data_correct(name):
         return False
 
 
+def playsound_checked():
+    """This function only play sound when checkbox is checked or unchecked."""
+    playsound("../assets/sounds/switch.mp3")
+
+
 # =============== GUI ==========================
 root = Tk()
 root.title("Flash Cards App by Mateusz Hyla")
@@ -289,8 +302,9 @@ checkbox_style.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), fore
                          background=FILLER_BG_COLOR, highlightthickness=0)
 checkbutton_var = IntVar()
 checkbutton = Checkbutton(root, text="To All?", cursor="hand2",
-                          style="Action.TCheckbutton", variable=checkbutton_var)
+                          style="Action.TCheckbutton", variable=checkbutton_var, command=playsound_checked)
 checkbutton.grid(row=5, column=1, padx=10, pady=5, ipady=6)
+
 
 btn_style = Style()
 btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
@@ -306,6 +320,7 @@ liner_2 = Canvas(root, width=50, height=200, bg=FILLER_BG_COLOR, highlightthickn
 liner_img_2 = PhotoImage(file="./assets/images/liner.png")
 liner_2.create_image(40, 200, image=liner_img_2)
 liner_2.grid(row=1, column=3, rowspan=5, padx=(10, 45))
+
 
 # Add
 add_label = Label(root, text="ADD", font=("Arial", 24, "bold"), background=FILLER_BG_COLOR)
@@ -337,7 +352,7 @@ add_btn.grid(row=5, column=5, ipady=7, ipadx=7, pady=20)
 ajax_img = PhotoImage(file="./assets/images/work_in_progress.png")
 ajax_label = Label(root, image=ajax_img)
 ajax_label.grid(column=0, row=7, columnspan=6, padx=0, pady=0)
-ajax_label_txt = Label(root, text="", background=FILLER_BG_COLOR)
+ajax_label_txt = Label(root, text="", background=FILLER_BG_COLOR, font=("Arial", 10, "bold"))
 ajax_label_txt.grid(column=0, row=8, columnspan=6, padx=0, pady=0)
 
 root.mainloop()
