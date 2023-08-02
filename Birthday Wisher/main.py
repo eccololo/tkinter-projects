@@ -111,8 +111,51 @@ def center_the_project_window(w_root):
     w_root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
-def send_birthday_wishes_email():
-    pass
+def get_recipient_data_from_db_as_list():
+    """This file reads data from DB file and returns it as a list."""
+    output = []
+    df = pd.read_csv(BIRTHDAY_FILE)
+    for index, row in df.iterrows():
+        df_day = row['day']
+        df_month = row['month']
+        df_name = row['name']
+        df_year = row['year']
+        df_email = row['email']
+
+        output.append({
+            "name": df_name,
+            "email": df_email,
+            "year": df_year,
+            "month": df_month,
+            "day": df_day
+        })
+
+    return output
+
+
+def add_recipient_to_db():
+    """This function adds recipient data do DB file."""
+    email_to = email_add_to_entry.get()
+    name_to = email_name_entry.get()
+    dob = app_dob_entry.get().split("/")
+    day = dob[0]
+    month = dob[1]
+    year = dob[2]
+
+    db_data = get_recipient_data_from_db_as_list()
+
+    new_recipient = {
+        "name": name_to,
+        "email": email_to,
+        "year": year,
+        "month": month,
+        "day": day
+    }
+
+    db_data.append(new_recipient)
+    df = pd.DataFrame(db_data)
+    df.to_csv(BIRTHDAY_FILE, index=False)
+
 
 
 # =============== GUI ==========================
@@ -166,8 +209,33 @@ send_btn.grid(row=4, column=1, ipady=7, ipadx=7, pady=20)
 liner_1 = Canvas(root, width=50, height=200, bg=FILLER_BG_COLOR, highlightthickness=0)
 liner_img_1 = PhotoImage(file="./assets/images/liner.png")
 liner_1.create_image(40, 200, image=liner_img_1)
-liner_1.grid( row=0, column=2, rowspan=5)
+liner_1.grid(row=0, column=2, rowspan=5, padx=(10, 45))
 
+# Add
+add_label = Label(root, text="Add", font=("Arial", 24, "bold"), background=FILLER_BG_COLOR)
+add_label.grid(row=0, column=4, padx=40, pady=15)
 
+email_add_to_label = Label(root, text="To:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
+email_add_to_label.grid(row=1, column=3, pady=5)
+email_add_to_entry = Entry(width=35)
+email_add_to_entry.grid(row=1, column=4, padx=10, pady=5, ipady=6)
+
+email_name_label = Label(root, text="Name:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
+email_name_label.grid(row=2, column=3, pady=5)
+email_name_entry = Entry(width=35)
+email_name_entry.grid(row=2, column=4, padx=10, pady=5, ipady=6)
+
+app_dob_label = Label(root, text="DOB:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
+app_dob_label.grid(row=3, column=3, pady=5)
+app_dob_entry = Entry(width=35)
+app_dob_entry.insert(0, "dd/mm/yyyy")
+app_dob_entry.grid(row=3, column=4, padx=10, pady=5, ipady=6)
+
+btn_style = Style()
+btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
+                    background="#01d1ff", highlightthickness=0)
+
+add_btn = Button(text="Add", command=add_recipient_to_db, width=13, style="Action.TButton")
+add_btn.grid(row=4, column=4, ipady=7, ipadx=7, pady=20)
 
 root.mainloop()
