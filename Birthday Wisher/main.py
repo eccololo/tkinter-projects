@@ -153,9 +153,21 @@ def add_recipient_to_db():
     }
 
     db_data.append(new_recipient)
-    df = pd.DataFrame(db_data)
-    df.to_csv(BIRTHDAY_FILE, index=False)
+    try:
+        df = pd.DataFrame(db_data)
+        df.to_csv(BIRTHDAY_FILE, index=False)
+    except:
+        messagebox.showwarning("Saving Failed!", "Saving recipient data to DB failed."
+                                                 "\nContact support at support@gmail.com.")
+    else:
+        messagebox.showinfo("Saving Success!", f"Data:\nEmail: {email_to}\n"
+                                               f"Name: {name_to}\n"
+                                               f"DOB: {day}\\{month}\\{year}"
+                                               f"\nSaved Successfully!")
 
+        email_add_to_entry.delete(0, END)
+        email_name_entry.delete(0, END)
+        app_dob_entry.delete(0, END)
 
 
 # =============== GUI ==========================
