@@ -12,6 +12,7 @@ import random
 import smtplib
 import pandas as pd
 import os
+import re
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
@@ -144,6 +145,10 @@ def add_recipient_to_db():
     year = dob_cleared[2]
     acceptable_year = dt.datetime.now().year - 1
 
+    if not is_email_entry_data_correct(email_to):
+        messagebox.showwarning("Wrong Email!", "The email is incorrect.")
+        return -1
+
     if not day:
         messagebox.showwarning("Wrong Day!", "The day can only be a digit between 1 and 31.")
         return -1
@@ -212,6 +217,15 @@ def clear_dob_entry_data(data):
         year = False
 
     return day, month, year
+
+
+def is_email_entry_data_correct(email):
+    """This function checks if the email is correct. Return False if it is not."""
+    regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$"
+    if re.match(regex, email):
+        return True
+    else:
+        return False
 
 
 # =============== GUI ==========================
