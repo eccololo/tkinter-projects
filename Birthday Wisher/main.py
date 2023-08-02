@@ -137,7 +137,7 @@ def get_recipient_data_from_db_as_list():
 def add_recipient_to_db():
     """This function adds recipient data do DB file."""
     email_to = email_add_to_entry.get()
-    name_to = email_name_entry.get()
+    name_to = email_name_entry.get().capitalize()
     dob = app_dob_entry.get().split("/")
     dob_cleared = clear_dob_entry_data(dob)
     day = dob_cleared[0]
@@ -147,6 +147,10 @@ def add_recipient_to_db():
 
     if not is_email_entry_data_correct(email_to):
         messagebox.showwarning("Wrong Email!", "The email is incorrect.")
+        return -1
+
+    if not is_name_entry_data_correct(name_to):
+        messagebox.showwarning("Wrong Name!", "The name is incorrect.")
         return -1
 
     if not day:
@@ -223,6 +227,15 @@ def is_email_entry_data_correct(email):
     """This function checks if the email is correct. Return False if it is not."""
     regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$"
     if re.match(regex, email):
+        return True
+    else:
+        return False
+
+
+def is_name_entry_data_correct(name):
+    """This function checks if the name is correct. Return False if it is not."""
+    regex = r"^[a-zA-Z][a-zA-Z '-]*$"
+    if re.match(regex, name):
         return True
     else:
         return False
