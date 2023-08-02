@@ -138,9 +138,23 @@ def add_recipient_to_db():
     email_to = email_add_to_entry.get()
     name_to = email_name_entry.get()
     dob = app_dob_entry.get().split("/")
-    day = dob[0]
-    month = dob[1]
-    year = dob[2]
+    dob_cleared = clear_dob_entry_data(dob)
+    day = dob_cleared[0]
+    month = dob_cleared[1]
+    year = dob_cleared[2]
+    acceptable_year = dt.datetime.now().year - 1
+
+    if not day:
+        messagebox.showwarning("Wrong Day!", "The day can only be a digit between 1 and 31.")
+        return -1
+
+    if not month:
+        messagebox.showwarning("Wrong Month!", "The month can only be a digit between 1 and 12.")
+        return -1
+
+    if not year:
+        messagebox.showwarning("Wrong Year!", f"The year can only be a digit between 1900 and {acceptable_year}.")
+        return -1
 
     db_data = get_recipient_data_from_db_as_list()
 
@@ -162,12 +176,42 @@ def add_recipient_to_db():
     else:
         messagebox.showinfo("Saving Success!", f"Data:\nEmail: {email_to}\n"
                                                f"Name: {name_to}\n"
-                                               f"DOB: {day}\\{month}\\{year}"
+                                               f"DOB: {dob[0]}\\{dob[1]}\\{dob[2]}"
                                                f"\nSaved Successfully!")
 
         email_add_to_entry.delete(0, END)
         email_name_entry.delete(0, END)
         app_dob_entry.delete(0, END)
+
+
+def clear_dob_entry_data(data):
+    """This function clears dob entry data and return data cleared."""
+    day_s = list(data[0])
+    day = data[0]
+    month_s = list(data[1])
+    month = data[1]
+    year = data[2]
+    acceptable_year = dt.datetime.now().year - 1
+
+    if day_s[0] == "0":
+        day = day[1]
+
+    if not day.isdigit():
+        day = False
+
+    if month_s[0] == "0":
+        month = month[1]
+
+    if not month.isdigit():
+        month = False
+
+    if not year.isdigit() or len(year) > 4:
+        year = False
+
+    if int(year) < 1900 or int(year) > acceptable_year:
+        year = False
+
+    return day, month, year
 
 
 # =============== GUI ==========================
