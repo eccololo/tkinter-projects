@@ -12,11 +12,12 @@ from tkinter.ttk import *
 from tkinter import messagebox
 from playsound import playsound
 from functools import partial
+from time import sleep
 
 BIRTHDAY_FILE = "./birthdays.csv"
 LETTERS_DIR = "./assets/letter_templates"
 HOST = "smtp.gmail.com"
-WINDOW_WIDTH = 920
+WINDOW_WIDTH = 840
 WINDOW_HEIGHT = 550
 FILLER_BG_COLOR = "#ff6600"
 
@@ -56,35 +57,51 @@ def get_birthday_data(file_path):
 
 def send_birthday_wishes_to_all(recipients_data):
     """This function sends email birthday wishes to all recipients."""
-
     global HOST
     app_pass = app_pass_entry.get()
     email_from = email_from_entry.get()
-    # FIXME:
-    #    1. Zrobic tak aby use mogl tez podac email i do niego tez wysle sie emaila.
-    email_to_add = email_to_entry.get()
-    for idx, recipient in enumerate(recipients_data):
-        idx += 1
-        email_to = recipient[1]
-        name_to = recipient[0]
-        year_to = recipient[2]
-        recipient_age = dt.datetime.now().year - year_to
+    send_to_all = checkbutton_var.get()
+    email_to = email_to_entry.get()
+    if send_to_all:
+        for idx, recipient in enumerate(recipients_data):
+            idx += 1
+            email_to = recipient[1]
+            name_to = recipient[0]
+            year_to = recipient[2]
+            recipient_age = dt.datetime.now().year - year_to
+            print(f"Sending email {idx}...")
+            send_email(email_to, email_from, app_pass, name_to, recipient_age)
+    else:
+        print(f"Sending email ...")
+        send_email(email_to, email_from, app_pass)
 
-        message = get_letter_content(LETTERS_DIR).replace("[NAME]", name_to)
-        subject = f"Happy birthday! It has been {recipient_age} :-)"
 
+def send_email(email_to, email_from, app_pass, name="Friend", year="long time"):
+    """This function sends one email to recipient."""
+    message = get_letter_content(LETTERS_DIR).replace("[NAME]", name)
+    subject = f"Happy birthday! It has been {year} :-)"
+    try:
+        ajax_label_txt.config(text="Working...")
+        root.update()
         with smtplib.SMTP(HOST) as conn:
             conn.starttls()
             conn.login(user=email_from, password=app_pass)
-            try:
-                conn.sendmail(from_addr=email_from,
-                              to_addrs=email_to,
-                              msg=f"Subject:{subject}\n\n"
-                                  f"{message}.")
-            except:
-                print(f"Email not sent. Something went wrong with email no_{idx}.")
-            else:
-                print(f"[{idx}]Email sent successfuly.")
+            conn.sendmail(from_addr=email_from,
+                          to_addrs=email_to,
+                          msg=f"Subject:{subject}\n\n"
+                              f"{message}.")
+    except smtplib.SMTPConnectError as err_msg:
+        print(f"Email not sent. Something went wrong with sending email.")
+        print(f"Error message: {err_msg}")
+        print("-" * 7)
+    else:
+        print(f"Email sent successfuly.")
+
+    finally:
+        email_to_entry.delete(0, END)
+        email_from_entry.delete(0, END)
+        app_pass_entry.delete(0, END)
+        ajax_label_txt.config(text="")
 
 
 def center_the_project_window(w_root):
@@ -237,12 +254,12 @@ def is_name_entry_data_correct(name):
 
 # =============== GUI ==========================
 root = Tk()
-root.title("Flash Cards App")
+root.title("Flash Cards App by Mateusz Hyla")
 center_the_project_window(root)
 root.config(pady=40, padx=40)
 root.configure(bg='#ff6600')
 
-# # Logo
+# Logo
 canvas = Canvas(root, width=60, height=60, bg=FILLER_BG_COLOR, highlightthickness=0)
 bw_logo = PhotoImage(file="./assets/images/bw_logo_small.png")
 canvas.create_image(40, 40, image=bw_logo)
@@ -258,7 +275,7 @@ email_to_entry = Entry(width=35)
 email_to_entry.grid(row=2, column=2, padx=10, pady=5, ipady=6)
 
 email_from_label = Label(root, text="From:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
-email_from_label.grid(row=2, column=1, pady=5)
+email_from_label.grid(row=3, column=1, pady=5)
 email_from_entry = Entry(width=35)
 email_from_entry.grid(row=3, column=2, padx=10, pady=5, ipady=6)
 
@@ -267,13 +284,21 @@ app_pass_label.grid(row=4, column=1, pady=5)
 app_pass_entry = Entry(width=35, show="*")
 app_pass_entry.grid(row=4, column=2, padx=10, pady=5, ipady=6)
 
+checkbox_style = Style()
+checkbox_style.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), foreground="#000000",
+                         background=FILLER_BG_COLOR, highlightthickness=0)
+checkbutton_var = IntVar()
+checkbutton = Checkbutton(root, text="To All?", cursor="hand2",
+                          style="Action.TCheckbutton", variable=checkbutton_var)
+checkbutton.grid(row=5, column=1, padx=10, pady=5, ipady=6)
+
 btn_style = Style()
 btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
                     background="#01d1ff", highlightthickness=0)
 
 recipients_data = get_birthday_data(BIRTHDAY_FILE)
 send_birthday_wishes_to_all = partial(send_birthday_wishes_to_all, recipients_data)
-send_btn = Button(text="Send", command=send_birthday_wishes_to_all, width=13, style="Action.TButton")
+send_btn = Button(text="Send", command=send_birthday_wishes_to_all, width=13, style="Action.TButton", cursor="hand2")
 send_btn.grid(row=5, column=2, ipady=7, ipadx=7, pady=20)
 
 # Vertical Line 2
@@ -283,7 +308,7 @@ liner_2.create_image(40, 200, image=liner_img_2)
 liner_2.grid(row=1, column=3, rowspan=5, padx=(10, 45))
 
 # Add
-add_label = Label(root, text="Add", font=("Arial", 24, "bold"), background=FILLER_BG_COLOR)
+add_label = Label(root, text="ADD", font=("Arial", 24, "bold"), background=FILLER_BG_COLOR)
 add_label.grid(row=1, column=5, padx=40, pady=15)
 
 email_add_to_label = Label(root, text="To:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
@@ -306,7 +331,13 @@ btn_style = Style()
 btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
                     background="#01d1ff", highlightthickness=0)
 
-add_btn = Button(text="Add", command=add_recipient_to_db, width=13, style="Action.TButton")
+add_btn = Button(text="Add", command=add_recipient_to_db, width=13, style="Action.TButton", cursor="hand2")
 add_btn.grid(row=5, column=5, ipady=7, ipadx=7, pady=20)
+
+ajax_img = PhotoImage(file="./assets/images/work_in_progress.png")
+ajax_label = Label(root, image=ajax_img)
+ajax_label.grid(column=0, row=7, columnspan=6, padx=0, pady=0)
+ajax_label_txt = Label(root, text="", background=FILLER_BG_COLOR)
+ajax_label_txt.grid(column=0, row=8, columnspan=6, padx=0, pady=0)
 
 root.mainloop()
