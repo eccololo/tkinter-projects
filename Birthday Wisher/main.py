@@ -90,7 +90,7 @@ def send_email(email_to, email_from, app_pass, name="Friend", year="long time", 
     try:
         ajax_label_txt.config(text=f"[{idx}] Working...")
         root.update()
-        with smtplib.SMTP(HOST) as conn:
+        with smtplib.SMTP(HOST, port=587) as conn:
             conn.starttls()
             conn.login(user=email_from, password=app_pass)
             conn.sendmail(from_addr=email_from,
