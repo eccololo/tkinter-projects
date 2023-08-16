@@ -1,7 +1,6 @@
 # TODO:
 #    1. Dodać mozliwosc wysylania emaila z osadzonym imagem w emailu.
 #    2. Dodac do kazdego emaila troche emojis.
-#    3. Dodać checkboxa add_img? w dobrym miejscu na GUI.
 
 import datetime as dt
 import random
@@ -25,7 +24,7 @@ LETTERS_DIR_HTML = "./assets/letter_templates/html"
 BIRTHDAY_IMAGE = "./assets/images/urodziny-600x400.jpg"
 HOST = "smtp.gmail.com"
 WINDOW_WIDTH = 840
-WINDOW_HEIGHT = 550
+WINDOW_HEIGHT = 580
 FILLER_BG_COLOR = "#ff6600"
 
 
@@ -421,7 +420,7 @@ checkbutton_var_to_all = IntVar()
 checkbutton_to_all = Checkbutton(root, text="To All?", cursor="hand2",
                                  style="Action.TCheckbutton", variable=checkbutton_var_to_all, command=playsound_checked)
 Hovertip(checkbutton_to_all, 'Send emails to all recipients in DB,\n who celebrate birthday today.')
-checkbutton_to_all.grid(row=5, column=1, padx=10, pady=5, ipady=6)
+checkbutton_to_all.grid(row=6, column=1, padx=10, pady=5, ipady=6)
 
 checkbox_style_img = Style()
 checkbox_style_img.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), foreground="#000000",
@@ -431,7 +430,7 @@ checkbutton_img = Checkbutton(root, text="Add Img?", cursor="hand2",
                                  style="Action.TCheckbutton", variable=checkbutton_var_img, command=playsound_checked)
 Hovertip(checkbutton_img, 'Do you want to add birthday card image in email\n'
                           'and as an email attachment?')
-checkbutton_img.grid(row=6, column=1, padx=10, pady=5, ipady=6)
+checkbutton_img.grid(row=6, column=2, padx=10, pady=5, ipady=6, sticky='W')
 
 btn_style = Style()
 btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
