@@ -227,10 +227,9 @@ def add_recipient_to_db():
 
     db_data.append(new_recipient)
     try:
-        # FIXME:
-        #    1. Add context manager to this reading file.
         df = pd.DataFrame(db_data)
-        df.to_csv(BIRTHDAY_FILE, index=False)
+        with open(BIRTHDAY_FILE, 'w', newline='') as csvfile:
+            df.to_csv(csvfile, index=False)
     except:
         messagebox.showwarning("Saving Failed!", "Saving recipient data to DB failed."
                                                  "\nContact support at support@gmail.com.")
