@@ -1,0 +1,9 @@
+<html>
+      <head></head>
+      <body>
+        <h3>Happy Birthday Dear [NAME]!</h3>
+        <p>It's your birthday! Have a great day!</p>
+        <p>Lots of love,</p>
+        <p>Mateusz</p>
+      </body>
+    </html>

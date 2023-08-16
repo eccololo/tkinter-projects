@@ -1,5 +1,7 @@
 # TODO:
-#    4. Dodać możliwość wysyłania emaili w postaci HTML.
+#    1. Dodać mozliwosc wysylania emaila z osadzonym imagem w emailu.
+#    2. Dodac do kazdego emaila troche emojis.
+#    3. Dodać checkboxa add_img? w dobrym miejscu na GUI.
 
 import datetime as dt
 import random
@@ -13,9 +15,14 @@ from tkinter import messagebox
 from playsound import playsound
 from functools import partial
 from idlelib.tooltip import Hovertip
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 
 BIRTHDAY_FILE = "./birthdays.csv"
-LETTERS_DIR = "./assets/letter_templates"
+LETTERS_DIR_TXT = "./assets/letter_templates/text"
+LETTERS_DIR_HTML = "./assets/letter_templates/html"
+BIRTHDAY_IMAGE = "./assets/images/urodziny-600x400.jpg"
 HOST = "smtp.gmail.com"
 WINDOW_WIDTH = 840
 WINDOW_HEIGHT = 550
@@ -28,13 +35,20 @@ def get_letter_content(letters_dir_path):
 
     letters_no = len(os.listdir(letters_dir_path))
     letter_no = random.randrange(1, letters_no)
-    file_name = f"letter_{letter_no}.txt"
+    if "html" in letters_dir_path:
+        file_name = f"letter_html_{letter_no}.txt"
+    else:
+        file_name = f"letter_{letter_no}.txt"
     file_path = os.path.join(letters_dir_path, file_name)
 
-    with open(file_path, "r") as f:
-        data = f.read()
-
-    return data
+    try:
+        with open(file_path, "r") as f:
+            data = f.read()
+    except FileNotFoundError as err_msg:
+        print("Letter file was not found.")
+        print(f"Error message: {err_msg}")
+    else:
+        return data
 
 
 def get_birthday_data(file_path):
@@ -68,10 +82,14 @@ def send_birthday_wishes_to_all(recipients_data):
     global HOST
     app_pass = app_pass_entry.get()
     email_from = email_from_entry.get()
-    send_to_all = checkbutton_var.get()
+    send_to_all = checkbutton_var_to_all.get()
+    send_img = checkbutton_var_img.get()
     email_to = email_to_entry.get()
     if send_to_all:
-        send_email(email_to, email_from, app_pass, idx="0")
+        if send_img:
+            send_html_email_with_image_attachment(email_to, email_from, app_pass, idx="0")
+        else:
+            send_email(email_to, email_from, app_pass, idx="0")
         if len(recipients_data) > 0:
             for idx, recipient in enumerate(recipients_data):
                 idx += 1
@@ -80,18 +98,24 @@ def send_birthday_wishes_to_all(recipients_data):
                 year_to = recipient[2]
                 recipient_age = dt.datetime.now().year - year_to
                 print(f"Sending email {idx}...")
-                send_email(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
+                if send_img:
+                    send_html_email_with_image_attachment(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
+                else:
+                    send_email(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
         else:
             print("No recipients who celebrate today birthday.")
             ajax_label_txt.config(text="Email send.\nNo one has birthday today.")
     else:
         print(f"Sending email ...")
-        send_email(email_to, email_from, app_pass, idx="1")
+        if send_img:
+            send_html_email_with_image_attachment(email_to, email_from, app_pass, idx="1")
+        else:
+            send_email(email_to, email_from, app_pass, idx="1")
 
 
 def send_email(email_to, email_from, app_pass, name="Friend", year="long time", idx=""):
     """This function sends one email to recipient."""
-    message = get_letter_content(LETTERS_DIR).replace("[NAME]", name)
+    message = get_letter_content(LETTERS_DIR_TXT).replace("[NAME]", name)
     if type(year) is int:
         subject = f"Happy birthday! It has been {year} years :-)!"
     else:
@@ -106,6 +130,64 @@ def send_email(email_to, email_from, app_pass, name="Friend", year="long time", 
                           to_addrs=email_to,
                           msg=f"Subject:{subject}\n\n"
                               f"{message}.")
+    except smtplib.SMTPConnectError as err_msg:
+        print(f"Email not sent. Something went wrong with sending email.")
+        print(f"Error message: {err_msg}")
+        print("-" * 7)
+        ajax_label_txt.config(text=f"[{idx}] Failed ...")
+    else:
+        print(f"Email sent successfuly.")
+        ajax_label_txt.config(text=f"[{idx}] Done ...")
+
+    finally:
+        email_to_entry.delete(0, END)
+        email_from_entry.delete(0, END)
+        app_pass_entry.delete(0, END)
+
+
+def send_html_email_with_image_attachment(email_to, email_from, app_pass, name="Friend", year="long time", idx=""):
+    """This function sends email in HTML format with birthday card as attachment."""
+    msg = MIMEMultipart('alternative')
+    msg['From'] = email_from
+    msg['To'] = email_to
+
+    if type(year) is int:
+        subject = f"Happy birthday! It has been {year} years :-)!"
+    else:
+        subject = f"Happy birthday! It has been {year} :-)!"
+
+    msg['Subject'] = subject
+
+    try:
+        with open(BIRTHDAY_IMAGE, 'rb') as f:
+            img_data = f.read()
+    except FileNotFoundError as err_msg:
+        messagebox.showerror("Birthday card error!", "Birthday card file was not found.\n"
+                                                     "Contact app support to solve this problem.")
+        print(f"Error message: {err_msg}")
+    else:
+        image = MIMEImage(img_data, name="Happy Birthday!")
+        msg.attach(image)
+
+    message = get_letter_content(LETTERS_DIR_TXT).replace("[NAME]", name)
+    html = get_letter_content(LETTERS_DIR_HTML).replace("[NAME]", name)
+
+    part1 = MIMEText(message, 'plain')
+    part2 = MIMEText(html, 'html')
+
+    msg.attach(part1)
+    msg.attach(part2)
+
+    try:
+        ajax_label_txt.config(text=f"[{idx}] Working...")
+        root.update()
+        with smtplib.SMTP(HOST, port=587) as conn:
+            conn.starttls()
+            conn.login(user=email_from, password=app_pass)
+            conn.sendmail(from_addr=email_from,
+                          to_addrs=email_to,
+                          msg=msg.as_string())
+
     except smtplib.SMTPConnectError as err_msg:
         print(f"Email not sent. Something went wrong with sending email.")
         print(f"Error message: {err_msg}")
@@ -332,14 +414,24 @@ Hovertip(app_pass_label, 'This is not password to your email account!\n'
 app_pass_entry = Entry(width=35, show="*")
 app_pass_entry.grid(row=4, column=2, padx=10, pady=5, ipady=6)
 
-checkbox_style = Style()
-checkbox_style.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), foreground="#000000",
+checkbox_style_to_all = Style()
+checkbox_style_to_all.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), foreground="#000000",
                          background=FILLER_BG_COLOR, highlightthickness=0)
-checkbutton_var = IntVar()
-checkbutton = Checkbutton(root, text="To All?", cursor="hand2",
-                          style="Action.TCheckbutton", variable=checkbutton_var, command=playsound_checked)
-Hovertip(checkbutton, 'Send emails to all recipients in DB,\n who celebrate birthday today.')
-checkbutton.grid(row=5, column=1, padx=10, pady=5, ipady=6)
+checkbutton_var_to_all = IntVar()
+checkbutton_to_all = Checkbutton(root, text="To All?", cursor="hand2",
+                                 style="Action.TCheckbutton", variable=checkbutton_var_to_all, command=playsound_checked)
+Hovertip(checkbutton_to_all, 'Send emails to all recipients in DB,\n who celebrate birthday today.')
+checkbutton_to_all.grid(row=5, column=1, padx=10, pady=5, ipady=6)
+
+checkbox_style_img = Style()
+checkbox_style_img.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), foreground="#000000",
+                         background=FILLER_BG_COLOR, highlightthickness=0)
+checkbutton_var_img = IntVar()
+checkbutton_img = Checkbutton(root, text="Add Img?", cursor="hand2",
+                                 style="Action.TCheckbutton", variable=checkbutton_var_img, command=playsound_checked)
+Hovertip(checkbutton_img, 'Do you want to add birthday card image in email\n'
+                          'and as an email attachment?')
+checkbutton_img.grid(row=6, column=1, padx=10, pady=5, ipady=6)
 
 btn_style = Style()
 btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
