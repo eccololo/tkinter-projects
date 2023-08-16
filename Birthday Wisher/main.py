@@ -74,7 +74,7 @@ def send_birthday_wishes_to_all(recipients_data):
     send_to_all = checkbutton_var.get()
     email_to = email_to_entry.get()
     if send_to_all:
-        send_email(email_to, email_from, app_pass)
+        send_email(email_to, email_from, app_pass, idx="0")
         if len(recipients_data) > 0:
             for idx, recipient in enumerate(recipients_data):
                 idx += 1
@@ -86,16 +86,16 @@ def send_birthday_wishes_to_all(recipients_data):
                 send_email(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
         else:
             print("No recipients who celebrate today birthday.")
-            ajax_label_txt.config(text="No recipients who celebrate today birthday.")
+            ajax_label_txt.config(text="Email send.\nNo one has birthday today.")
     else:
         print(f"Sending email ...")
-        send_email(email_to, email_from, app_pass)
+        send_email(email_to, email_from, app_pass, idx="1")
 
 
 def send_email(email_to, email_from, app_pass, name="Friend", year="long time", idx=""):
     """This function sends one email to recipient."""
     message = get_letter_content(LETTERS_DIR).replace("[NAME]", name)
-    if year.isdigit():
+    if type(year) is int:
         subject = f"Happy birthday! It has been {year} years :-)!"
     else:
         subject = f"Happy birthday! It has been {year} :-)!"
@@ -116,7 +116,7 @@ def send_email(email_to, email_from, app_pass, name="Friend", year="long time", 
         ajax_label_txt.config(text=f"[{idx}] Failed ...")
     else:
         print(f"Email sent successfuly.")
-        ajax_label_txt.config(text=f"[{idx}] Success ...")
+        ajax_label_txt.config(text=f"[{idx}] Done ...")
 
     finally:
         email_to_entry.delete(0, END)
