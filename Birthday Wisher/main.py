@@ -3,6 +3,7 @@
 #       Jesli jest to go nie dodajemy.
 #    2. Zobaczyć jak dodać tooltips do checkboxa np.
 #    3. Dodać efekty dźwiękowe do przycisków.
+#    4. Dodać możliwość wysyłania emaili w postaci HTML.
 
 import datetime as dt
 import random
@@ -70,6 +71,7 @@ def send_birthday_wishes_to_all(recipients_data):
     send_to_all = checkbutton_var.get()
     email_to = email_to_entry.get()
     if send_to_all:
+        send_email(email_to, email_from, app_pass)
         for idx, recipient in enumerate(recipients_data):
             idx += 1
             email_to = recipient[1]
