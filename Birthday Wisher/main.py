@@ -146,23 +146,38 @@ def center_the_project_window(w_root):
 def get_recipient_data_from_db_as_list():
     """This file reads data from DB file and returns it as a list."""
     output = []
-    df = pd.read_csv(BIRTHDAY_FILE)
-    for index, row in df.iterrows():
-        df_day = row['day']
-        df_month = row['month']
-        df_name = row['name']
-        df_year = row['year']
-        df_email = row['email']
+    try:
+        with open(BIRTHDAY_FILE, 'r') as csvfile:
+            df = pd.read_csv(csvfile)
+    except FileNotFoundError as err_msg:
+        print("Could not read DB csv file. File not found.")
+        print(f"Error message: {err_msg}")
+    else:
+        for index, row in df.iterrows():
+            df_day = row['day']
+            df_month = row['month']
+            df_name = row['name']
+            df_year = row['year']
+            df_email = row['email']
 
-        output.append({
-            "name": df_name,
-            "email": df_email,
-            "year": df_year,
-            "month": df_month,
-            "day": df_day
-        })
+            output.append({
+                "name": df_name,
+                "email": df_email,
+                "year": df_year,
+                "month": df_month,
+                "day": df_day
+            })
+    finally:
+        return output
 
-    return output
+
+def check_if_recipient_is_already_in_db(recipient_email):
+    """This method checks if the recipient is already in DB and return True if is or False if is not."""
+    db_data = get_recipient_data_from_db_as_list()
+    for item in db_data:
+        if recipient_email == item["email"]:
+            return True
+    return False
 
 
 def add_recipient_to_db():
@@ -175,6 +190,10 @@ def add_recipient_to_db():
     month = dob_cleared[1]
     year = dob_cleared[2]
     acceptable_year = dt.datetime.now().year - 1
+
+    if check_if_recipient_is_already_in_db(email_to):
+        messagebox.showwarning("Email already in DB!", "This recipient is already in DB.")
+        return -1
 
     if not is_email_entry_data_correct(email_to):
         messagebox.showwarning("Wrong Email!", "The email is incorrect.")
@@ -208,6 +227,8 @@ def add_recipient_to_db():
 
     db_data.append(new_recipient)
     try:
+        # FIXME:
+        #    1. Add context manager to this reading file.
         df = pd.DataFrame(db_data)
         df.to_csv(BIRTHDAY_FILE, index=False)
     except:
@@ -317,7 +338,6 @@ checkbutton = Checkbutton(root, text="To All?", cursor="hand2",
                           style="Action.TCheckbutton", variable=checkbutton_var, command=playsound_checked)
 checkbutton.grid(row=5, column=1, padx=10, pady=5, ipady=6)
 
-
 btn_style = Style()
 btn_style.configure('Action.TButton', font=("Arial", 11, 'bold'), foreground="#000000",
                     background="#01d1ff", highlightthickness=0)
@@ -332,7 +352,6 @@ liner_2 = Canvas(root, width=50, height=200, bg=FILLER_BG_COLOR, highlightthickn
 liner_img_2 = PhotoImage(file="./assets/images/liner.png")
 liner_2.create_image(40, 200, image=liner_img_2)
 liner_2.grid(row=1, column=3, rowspan=5, padx=(10, 45))
-
 
 # Add
 add_label = Label(root, text="ADD", font=("Arial", 24, "bold"), background=FILLER_BG_COLOR)
