@@ -88,7 +88,7 @@ def send_birthday_wishes_to_all(recipients_data):
 def send_email(email_to, email_from, app_pass, name="Friend", year="long time", idx=""):
     """This function sends one email to recipient."""
     message = get_letter_content(LETTERS_DIR).replace("[NAME]", name)
-    subject = f"Happy birthday! It has been {year} :-)"
+    subject = f"Happy birthday! It has been {year} years :-)!"
     try:
         ajax_label_txt.config(text=f"[{idx}] Working...")
         root.update()
