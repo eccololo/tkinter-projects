@@ -1,5 +1,4 @@
 # TODO:
-#    2. Zobaczyć jak dodać tooltips do checkboxa np.
 #    4. Dodać możliwość wysyłania emaili w postaci HTML.
 
 import datetime as dt
