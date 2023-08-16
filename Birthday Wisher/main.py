@@ -1,8 +1,5 @@
 # TODO:
-#    1. Dodać sprawdzenie czy jak dodajemy nowego recipienta to czy nie ma go już w DB.
-#       Jesli jest to go nie dodajemy.
 #    2. Zobaczyć jak dodać tooltips do checkboxa np.
-#    3. Dodać efekty dźwiękowe do przycisków.
 #    4. Dodać możliwość wysyłania emaili w postaci HTML.
 
 import datetime as dt
@@ -16,6 +13,7 @@ from tkinter.ttk import *
 from tkinter import messagebox
 from playsound import playsound
 from functools import partial
+from idlelib.tooltip import Hovertip
 
 BIRTHDAY_FILE = "./birthdays.csv"
 LETTERS_DIR = "./assets/letter_templates"
@@ -316,16 +314,22 @@ send_label.grid(row=1, column=2, padx=40, pady=15)
 
 email_to_label = Label(root, text="To:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
 email_to_label.grid(row=2, column=1, pady=5)
+Hovertip(email_to_label, 'Email address of the recipient.')
 email_to_entry = Entry(width=35)
 email_to_entry.grid(row=2, column=2, padx=10, pady=5, ipady=6)
 
 email_from_label = Label(root, text="From:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
 email_from_label.grid(row=3, column=1, pady=5)
+Hovertip(email_from_label, 'Your email address.')
 email_from_entry = Entry(width=35)
 email_from_entry.grid(row=3, column=2, padx=10, pady=5, ipady=6)
 
 app_pass_label = Label(root, text="Pass:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
 app_pass_label.grid(row=4, column=1, pady=5)
+Hovertip(app_pass_label, 'This is not password to your email account!\n'
+                         'This is app password generated in your email account.\n'
+                         'If you don\'t know how to get it, research how to generate\n'
+                         'app pass in your email account.')
 app_pass_entry = Entry(width=35, show="*")
 app_pass_entry.grid(row=4, column=2, padx=10, pady=5, ipady=6)
 
@@ -335,6 +339,7 @@ checkbox_style.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), fore
 checkbutton_var = IntVar()
 checkbutton = Checkbutton(root, text="To All?", cursor="hand2",
                           style="Action.TCheckbutton", variable=checkbutton_var, command=playsound_checked)
+Hovertip(checkbutton, 'Send emails to all recipients in DB,\n who celebrate birthday today.')
 checkbutton.grid(row=5, column=1, padx=10, pady=5, ipady=6)
 
 btn_style = Style()
@@ -358,16 +363,19 @@ add_label.grid(row=1, column=5, padx=40, pady=15)
 
 email_add_to_label = Label(root, text="To:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
 email_add_to_label.grid(row=2, column=4, pady=5)
+Hovertip(email_add_to_label, 'Email address of a recipient.')
 email_add_to_entry = Entry(width=35)
 email_add_to_entry.grid(row=2, column=5, padx=10, pady=5, ipady=6)
 
 email_name_label = Label(root, text="Name:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
 email_name_label.grid(row=3, column=4, pady=5)
+Hovertip(email_name_label, 'Name of a recipient.')
 email_name_entry = Entry(width=35)
 email_name_entry.grid(row=3, column=5, padx=10, pady=5, ipady=6)
 
 app_dob_label = Label(root, text="DOB:", font=("Arial", 14, "bold"), background=FILLER_BG_COLOR)
 app_dob_label.grid(row=4, column=4, pady=5)
+Hovertip(app_dob_label, 'Date of birth of a recipient.')
 app_dob_entry = Entry(width=35)
 app_dob_entry.insert(0, "dd/mm/yyyy")
 app_dob_entry.grid(row=4, column=5, padx=10, pady=5, ipady=6)
