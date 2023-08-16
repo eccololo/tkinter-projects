@@ -42,25 +42,28 @@ def get_letter_content(letters_dir_path):
 
 def get_birthday_data(file_path):
     """This function returns True if there is someones birthday."""
-    # FIXME:
-    #    1. Ta metoda sprawia problemy. Playsound zwraca problem z powodu tej funkcji.
-    #       Dodać otwiranie pliku csv z with.
     day = dt.datetime.now().day
     month = dt.datetime.now().month
     recipients_data = []
 
-    df = pd.read_csv(file_path)
-    for index, row in df.iterrows():
-        df_day = row['day']
-        df_month = row['month']
-        df_name = row['name']
-        df_year = row['year']
-        df_email = row['email']
+    try:
+        with open(file_path, 'r') as csvfile:
+            df = pd.read_csv(csvfile)
+    except FileNotFoundError as err_msg:
+        print("Could not read DB csv file. File not found.")
+        print(f"Error message: {err_msg}")
+    else:
+        for index, row in df.iterrows():
+            df_day = row['day']
+            df_month = row['month']
+            df_name = row['name']
+            df_year = row['year']
+            df_email = row['email']
 
-        if day == df_day and month == df_month:
-            recipients_data.append((df_name, df_email, df_year))
-
-    return recipients_data
+            if day == df_day and month == df_month:
+                recipients_data.append((df_name, df_email, df_year))
+    finally:
+        return recipients_data
 
 
 def send_birthday_wishes_to_all(recipients_data):
@@ -72,14 +75,18 @@ def send_birthday_wishes_to_all(recipients_data):
     email_to = email_to_entry.get()
     if send_to_all:
         send_email(email_to, email_from, app_pass)
-        for idx, recipient in enumerate(recipients_data):
-            idx += 1
-            email_to = recipient[1]
-            name_to = recipient[0]
-            year_to = recipient[2]
-            recipient_age = dt.datetime.now().year - year_to
-            print(f"Sending email {idx}...")
-            send_email(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
+        if len(recipients_data) > 0:
+            for idx, recipient in enumerate(recipients_data):
+                idx += 1
+                email_to = recipient[1]
+                name_to = recipient[0]
+                year_to = recipient[2]
+                recipient_age = dt.datetime.now().year - year_to
+                print(f"Sending email {idx}...")
+                send_email(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
+        else:
+            print("No recipients who celebrate today birthday.")
+            ajax_label_txt.config(text="No recipients who celebrate today birthday.")
     else:
         print(f"Sending email ...")
         send_email(email_to, email_from, app_pass)
