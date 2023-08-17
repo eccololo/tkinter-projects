@@ -1,6 +1,3 @@
-# TODO:
-#    1. Dodać mozliwosc wysylania emaila z osadzonym imagem w emailu.
-
 import datetime as dt
 import random
 import smtplib
