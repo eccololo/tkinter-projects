@@ -1,6 +1,5 @@
 # TODO:
 #    1. Dodać mozliwosc wysylania emaila z osadzonym imagem w emailu.
-#    2. Dodac do kazdego emaila troche emojis.
 
 import datetime as dt
 import random
@@ -167,13 +166,14 @@ def send_html_email_with_image_attachment(email_to, email_from, app_pass, name="
         print(f"Error message: {err_msg}")
     else:
         image = MIMEImage(img_data, name="Happy Birthday!")
+        image.add_header('Content-ID', '<image1>')
         msg.attach(image)
 
     message = get_letter_content(LETTERS_DIR_TXT).replace("[NAME]", name)
     html = get_letter_content(LETTERS_DIR_HTML).replace("[NAME]", name)
 
-    part1 = MIMEText(message, 'plain')
-    part2 = MIMEText(html, 'html')
+    part1 = MIMEText(message, 'plain', 'utf-8')
+    part2 = MIMEText(html, 'html', 'utf-8')
 
     msg.attach(part1)
     msg.attach(part2)

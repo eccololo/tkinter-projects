@@ -5,5 +5,6 @@
         <p>Happy birthday! Have a wonderful time today and eat lots of cake!</p>
         <p>Lots of love,</p>
         <p>Mateusz</p>
+        <p><img src="cid:image1"></p>
       </body>
     </html>
