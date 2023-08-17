@@ -98,7 +98,8 @@ def send_birthday_wishes_to_all(recipients_data):
                 recipient_age = dt.datetime.now().year - year_to
                 print(f"Sending email {idx}...")
                 if send_img:
-                    send_html_email_with_image_attachment(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
+                    send_html_email_with_image_attachment(email_to, email_from, app_pass, name_to, recipient_age,
+                                                          str(idx))
                 else:
                     send_email(email_to, email_from, app_pass, name_to, recipient_age, str(idx))
         else:
@@ -200,6 +201,19 @@ def send_html_email_with_image_attachment(email_to, email_from, app_pass, name="
         email_to_entry.delete(0, END)
         email_from_entry.delete(0, END)
         app_pass_entry.delete(0, END)
+
+
+def return_encoded_message(body):
+    """This function encodes message to be able to send emojis in email."""
+    for body_charset in 'US-ASCII', 'ISO-8859-1', 'UTF-8':
+        try:
+            body.encode(body_charset)
+        except UnicodeError:
+            pass
+        else:
+            break
+
+    return body
 
 
 def center_the_project_window(w_root):
@@ -415,19 +429,20 @@ app_pass_entry.grid(row=4, column=2, padx=10, pady=5, ipady=6)
 
 checkbox_style_to_all = Style()
 checkbox_style_to_all.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), foreground="#000000",
-                         background=FILLER_BG_COLOR, highlightthickness=0)
+                                background=FILLER_BG_COLOR, highlightthickness=0)
 checkbutton_var_to_all = IntVar()
 checkbutton_to_all = Checkbutton(root, text="To All?", cursor="hand2",
-                                 style="Action.TCheckbutton", variable=checkbutton_var_to_all, command=playsound_checked)
+                                 style="Action.TCheckbutton", variable=checkbutton_var_to_all,
+                                 command=playsound_checked)
 Hovertip(checkbutton_to_all, 'Send emails to all recipients in DB,\n who celebrate birthday today.')
 checkbutton_to_all.grid(row=6, column=1, padx=10, pady=5, ipady=6)
 
 checkbox_style_img = Style()
 checkbox_style_img.configure('Action.TCheckbutton', font=("Arial", 11, 'bold'), foreground="#000000",
-                         background=FILLER_BG_COLOR, highlightthickness=0)
+                             background=FILLER_BG_COLOR, highlightthickness=0)
 checkbutton_var_img = IntVar()
 checkbutton_img = Checkbutton(root, text="Add Img?", cursor="hand2",
-                                 style="Action.TCheckbutton", variable=checkbutton_var_img, command=playsound_checked)
+                              style="Action.TCheckbutton", variable=checkbutton_var_img, command=playsound_checked)
 Hovertip(checkbutton_img, 'Do you want to add birthday card image in email\n'
                           'and as an email attachment?')
 checkbutton_img.grid(row=6, column=2, padx=10, pady=5, ipady=6, sticky='W')
