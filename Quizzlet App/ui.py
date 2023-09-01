@@ -3,8 +3,42 @@ from tkinter.ttk import *
 from tkinter import messagebox
 from playsound import playsound
 from quiz_brain import QuizBrain
+import settings
 
 THEME_COLOR = "#375362"
+
+
+class QuizModeInterface:
+
+    def __init__(self):
+        self.root = Tk()
+        self.root.title("Choose Mode")
+        self.root.config(pady=20, padx=20, bg=THEME_COLOR)
+        self.root.geometry("230x100")
+
+        self.true_btn = Button(text="Ease Mode",
+                               width=30,
+                               cursor="hand2",
+                               command=self.set_easy_mode)
+        self.true_btn.grid(row=0, column=0)
+
+        self.false_btn = Button(text="Hard Mode",
+                                width=30,
+                                cursor="hand2",
+                                command=self.set_hard_mode)
+        self.false_btn.grid(row=1, column=0, pady=5)
+
+        self.root.mainloop()
+
+    def set_hard_mode(self):
+        settings.MODE = "hard"
+        print("Mode: hard")
+        self.root.destroy()
+
+    def set_easy_mode(self):
+        settings.MODE = "easy"
+        print("Mode: easy")
+        self.root.destroy()
 
 
 class QuizEasyModeInterface:
@@ -33,12 +67,12 @@ class QuizEasyModeInterface:
 
         self.true_btn_img = PhotoImage(file="./images/true.png")
         self.true_btn = Button(text="True", width=13, image=self.true_btn_img,
-                          cursor="hand2", command=self.check_answer_true)
+                               cursor="hand2", command=self.check_answer_true)
         self.true_btn.grid(row=2, column=0, pady=25)
 
         self.false_btn_img = PhotoImage(file="./images/false.png")
         self.false_btn = Button(text="False", width=13, image=self.false_btn_img,
-                               cursor="hand2", command=self.check_answer_false)
+                                cursor="hand2", command=self.check_answer_false)
         self.false_btn.grid(row=2, column=1, pady=25)
 
         self.show_next_question()
@@ -71,5 +105,3 @@ class QuizEasyModeInterface:
             self.question_canvas.configure(bg="green")
         else:
             self.question_canvas.configure(bg="red")
-
-
