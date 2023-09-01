@@ -1,0 +1,1 @@
+MODE = "easy"
