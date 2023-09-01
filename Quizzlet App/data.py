@@ -9,7 +9,7 @@ def get_questions():
         "type": settings.API_DATA_TYPE,
         "category": 18
     }
-    response = requests.get(settings.API_URL, params=parameters)
+    response = requests.get(settings.API_ENDPOINT, params=parameters)
     response.raise_for_status()
     data = response.json()
     questions_list = data["results"]
