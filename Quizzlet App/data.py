@@ -1,14 +1,15 @@
 import requests
+import settings
 
 
 def get_questions():
     # Write your code here.
     parameters = {
-        "amount": 10,
-        "type": "boolean",
+        "amount": settings.API_DATA_AMOUNT,
+        "type": settings.API_DATA_TYPE,
         "category": 18
     }
-    response = requests.get("https://opentdb.com/api.php", params=parameters)
+    response = requests.get(settings.API_URL, params=parameters)
     response.raise_for_status()
     data = response.json()
     questions_list = data["results"]
