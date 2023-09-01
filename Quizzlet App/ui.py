@@ -4,6 +4,7 @@ from tkinter import messagebox
 from playsound import playsound
 from quiz_brain import QuizBrain
 import settings
+import random
 
 THEME_COLOR = "#375362"
 
@@ -114,6 +115,8 @@ class QuizHardModeInterface:
     def __init__(self, quiz_brain: QuizBrain):
 
         self.quiz = quiz_brain
+        self.incorrect_answers = self.quiz.incorrect_answers
+        self.correct_answer = self.quiz.correct_answer
 
         self.root = Tk()
         self.root.title("Quizzlet")
@@ -149,6 +152,7 @@ class QuizHardModeInterface:
                               cursor="hand2")
         self.four_btn.grid(row=2, column=4, pady=25)
 
+        self.shuffle_and_show_answers()
         self.show_next_question()
 
         self.root.mainloop()
@@ -181,3 +185,12 @@ class QuizHardModeInterface:
             self.question_canvas.configure(bg="green")
         else:
             self.question_canvas.configure(bg="red")
+
+    def shuffle_and_show_answers(self):
+        answer_btn_list = [self.one_btn, self.two_btn, self.three_btn, self.four_btn]
+        random.shuffle(answer_btn_list)
+        answers_txt_list = [self.correct_answer].extend(self.incorrect_answers)
+
+        for idx, item in enumerate(answer_btn_list):
+            item.config(text=answers_txt_list[idx])
+

@@ -7,6 +7,13 @@ class QuizBrain:
         self.question_number = 0
         self.score = 0
         self.question_list = q_list
+        # FIXME:
+        #    1. Here is bug. Doesn see false_answers parameter.
+        print(self.question_list.false_answers)
+        self.is_hard_mode = type(self.question_list.false_answers) is list
+        if self.is_hard_mode:
+            self.incorrect_answers = self.question_list.false_answers
+        self.correct_answer = q_list.answer
         self.current_question = None
 
     def still_has_questions(self):

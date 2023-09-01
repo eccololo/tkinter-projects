@@ -16,7 +16,7 @@ for question in question_data:
         question_false_answers = question["incorrect_answers"]
         new_question = Question(question_text, question_answer, question_false_answers)
     else:
-        new_question = Question(question_text, question_answer)
+        new_question = Question(question_text, question_answer, False)
     question_bank.append(new_question)
 
 
