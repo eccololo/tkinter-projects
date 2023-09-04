@@ -118,8 +118,6 @@ class QuizHardModeInterface:
     def __init__(self, quiz_brain: QuizBrain):
 
         self.quiz = quiz_brain
-        self.incorrect_answers = self.quiz.incorrect_answers
-        self.correct_answer = self.quiz.correct_answer
 
         self.root = Tk()
         self.root.title("Quizzlet")
@@ -139,24 +137,26 @@ class QuizHardModeInterface:
                                                               width=300)
         self.question_canvas.grid(row=1, column=1, columnspan=2, pady=5)
 
-        self.one_btn = Button(text="1", width=20,
+        self.one_btn = Button(text="", width=20,
                                cursor="hand2")
         self.one_btn.grid(row=2, column=0, pady=25)
 
-        self.two_btn = Button(text="2", width=20,
+        self.two_btn = Button(text="", width=20,
                                 cursor="hand2")
         self.two_btn.grid(row=2, column=1, pady=25)
 
-        self.three_btn = Button(text="3", width=20,
+        self.three_btn = Button(text="", width=20,
                                 cursor="hand2")
         self.three_btn.grid(row=2, column=2, pady=25)
 
-        self.four_btn = Button(text="2", width=20,
+        self.four_btn = Button(text="", width=20,
                               cursor="hand2")
         self.four_btn.grid(row=2, column=4, pady=25)
 
-        self.shuffle_and_show_answers()
         self.show_next_question()
+        self.incorrect_answers = self.quiz.get_incorrect_answers()
+        self.correct_answer = self.quiz.get_correct_answer()
+        self.shuffle_and_show_answers()
 
         self.root.mainloop()
 
@@ -192,8 +192,10 @@ class QuizHardModeInterface:
     def shuffle_and_show_answers(self):
         answer_btn_list = [self.one_btn, self.two_btn, self.three_btn, self.four_btn]
         random.shuffle(answer_btn_list)
-        answers_txt_list = [self.correct_answer].extend(self.incorrect_answers)
+        all_answers = self.incorrect_answers + [self.correct_answer]
 
         for idx, item in enumerate(answer_btn_list):
-            item.config(text=answers_txt_list[idx])
+            # item.config(text=answers_txt_list[idx])
+            item.config(text=all_answers[idx])
+            pass
 

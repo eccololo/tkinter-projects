@@ -1,5 +1,4 @@
 TODO:
-    3. Create class for difficult level that there are 4 answer options.
     4. Create parent class for tKinter window.
     5. Inherit from tKinter parent class in easy and difficult mode classes.
     6. Refactor code to be usable with easy and diffcult mode and 2 different API requests.
