@@ -122,7 +122,7 @@ class QuizHardModeInterface:
         self.root = Tk()
         self.root.title("Quizzlet")
         self.root.config(pady=20, padx=20, bg=THEME_COLOR)
-        self.root.geometry("660x400")
+        self.root.geometry("720x400")
 
         self.score_label = Label(self.root, text="Score: 0", background=THEME_COLOR,
                                  font=("Arial", 12, "bold"), foreground="white")
@@ -137,25 +137,23 @@ class QuizHardModeInterface:
                                                               width=300)
         self.question_canvas.grid(row=1, column=1, columnspan=2, pady=5)
 
-        self.one_btn = Button(text="", width=20,
+        self.one_btn = Button(text="", width=25, command=self.check_answer_1,
                                cursor="hand2")
         self.one_btn.grid(row=2, column=0, pady=25)
 
-        self.two_btn = Button(text="", width=20,
+        self.two_btn = Button(text="", width=25, command=self.check_answer_2,
                                 cursor="hand2")
         self.two_btn.grid(row=2, column=1, pady=25)
 
-        self.three_btn = Button(text="", width=20,
+        self.three_btn = Button(text="", width=25, command=self.check_answer_3,
                                 cursor="hand2")
         self.three_btn.grid(row=2, column=2, pady=25)
 
-        self.four_btn = Button(text="", width=20,
+        self.four_btn = Button(text="", width=25, command=self.check_answer_4,
                               cursor="hand2")
         self.four_btn.grid(row=2, column=4, pady=25)
 
         self.show_next_question()
-        self.incorrect_answers = self.quiz.get_incorrect_answers()
-        self.correct_answer = self.quiz.get_correct_answer()
         self.shuffle_and_show_answers()
 
         self.root.mainloop()
@@ -166,6 +164,7 @@ class QuizHardModeInterface:
             self.score_label.config(text=f"Score: {self.quiz.score}")
             q_text = self.quiz.next_question()
             self.question_canvas.itemconfig(self.question_text, text=q_text)
+            self.shuffle_and_show_answers()
         else:
             end_text = "There is no more questions. Congratulations!"
             self.question_canvas.itemconfig(self.question_text, text=end_text)
@@ -190,12 +189,32 @@ class QuizHardModeInterface:
             self.question_canvas.configure(bg="red")
 
     def shuffle_and_show_answers(self):
+        incorrect_answers = self.quiz.get_incorrect_answers()
+        correct_answer = self.quiz.get_correct_answer()
         answer_btn_list = [self.one_btn, self.two_btn, self.three_btn, self.four_btn]
         random.shuffle(answer_btn_list)
-        all_answers = self.incorrect_answers + [self.correct_answer]
+        all_answers = incorrect_answers + [correct_answer]
 
         for idx, item in enumerate(answer_btn_list):
-            # item.config(text=answers_txt_list[idx])
             item.config(text=all_answers[idx])
             pass
 
+    def check_answer_1(self):
+        btn_one_txt = self.one_btn.cget("text")
+        is_right = self.quiz.check_answer(btn_one_txt)
+        self.give_feedback(is_right)
+
+    def check_answer_2(self):
+        btn_two_txt = self.two_btn.cget("text")
+        is_right = self.quiz.check_answer(btn_two_txt)
+        self.give_feedback(is_right)
+
+    def check_answer_3(self):
+        btn_three_txt = self.three_btn.cget("text")
+        is_right = self.quiz.check_answer(btn_three_txt)
+        self.give_feedback(is_right)
+
+    def check_answer_4(self):
+        btn_four_txt = self.four_btn.cget("text")
+        is_right = self.quiz.check_answer(btn_four_txt)
+        self.give_feedback(is_right)

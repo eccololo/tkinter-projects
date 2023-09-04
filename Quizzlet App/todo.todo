@@ -2,4 +2,3 @@ TODO:
     4. Create parent class for tKinter window.
     5. Inherit from tKinter parent class in easy and difficult mode classes.
     6. Refactor code to be usable with easy and diffcult mode and 2 different API requests.
-    7. Implement Difficult mode -> working GUI class and bran quiz.
