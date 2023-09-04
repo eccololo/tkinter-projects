@@ -4,7 +4,6 @@ from ui import QuizEasyModeInterface
 from ui import QuizModeInterface
 from ui import QuizHardModeInterface
 import settings
-from pprint import pprint
 
 quiz_mode = QuizModeInterface()
 

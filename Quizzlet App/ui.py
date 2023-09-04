@@ -6,6 +6,7 @@ from playsound import playsound
 from quiz_brain import QuizBrain
 import settings
 import random
+from pygame import mixer
 
 THEME_COLOR = "#375362"
 
@@ -17,6 +18,7 @@ class QuizModeInterface:
         self.root.title("Choose Mode")
         self.root.config(pady=20, padx=20, bg=THEME_COLOR)
         self.root.geometry("230x100")
+        self.root.eval('tk::PlaceWindow . center')
 
         self.true_btn = Button(text="Ease Mode",
                                width=30,
@@ -57,6 +59,11 @@ class QuizEasyModeInterface:
         self.root.title("Quizzlet")
         self.root.config(pady=20, padx=20, bg=THEME_COLOR)
         self.root.geometry("400x500")
+
+        self.false_sound_asset_path = "./sounds/switch.mp3"
+        self.true_sound_asset_path = "./sounds/notification.mp3"
+
+        mixer.init()
 
         self.score_label = Label(self.root, text="Score: 0", background=THEME_COLOR,
                                  font=("Arial", 12, "bold"), foreground="white")
@@ -99,10 +106,18 @@ class QuizEasyModeInterface:
 
     def check_answer_true(self):
         is_right = self.quiz.check_answer("True")
+        if is_right:
+            self.playsound_true()
+        else:
+            self.playsound_false()
         self.give_feedback(is_right)
 
     def check_answer_false(self):
         is_right = self.quiz.check_answer("False")
+        if is_right:
+            self.playsound_true()
+        else:
+            self.playsound_false()
         self.give_feedback(is_right)
 
     def give_feedback(self, is_right):
@@ -111,6 +126,14 @@ class QuizEasyModeInterface:
             self.question_canvas.configure(bg="green")
         else:
             self.question_canvas.configure(bg="red")
+
+    def playsound_false(self):
+        mixer.music.load(self.false_sound_asset_path)
+        mixer.music.play()
+
+    def playsound_true(self):
+        mixer.music.load(self.true_sound_asset_path)
+        mixer.music.play()
 
 
 class QuizHardModeInterface:
@@ -123,6 +146,10 @@ class QuizHardModeInterface:
         self.root.title("Quizzlet")
         self.root.config(pady=20, padx=20, bg=THEME_COLOR)
         self.root.geometry("720x400")
+        self.false_sound_asset_path = "./sounds/switch.mp3"
+        self.true_sound_asset_path = "./sounds/notification.mp3"
+
+        mixer.init()
 
         self.score_label = Label(self.root, text="Score: 0", background=THEME_COLOR,
                                  font=("Arial", 12, "bold"), foreground="white")
@@ -202,19 +229,44 @@ class QuizHardModeInterface:
     def check_answer_1(self):
         btn_one_txt = self.one_btn.cget("text")
         is_right = self.quiz.check_answer(btn_one_txt)
+        if is_right:
+            self.playsound_true()
+        else:
+            self.playsound_false()
+
         self.give_feedback(is_right)
 
     def check_answer_2(self):
         btn_two_txt = self.two_btn.cget("text")
         is_right = self.quiz.check_answer(btn_two_txt)
+        if is_right:
+            self.playsound_true()
+        else:
+            self.playsound_false()
         self.give_feedback(is_right)
 
     def check_answer_3(self):
         btn_three_txt = self.three_btn.cget("text")
         is_right = self.quiz.check_answer(btn_three_txt)
+        if is_right:
+            self.playsound_true()
+        else:
+            self.playsound_false()
         self.give_feedback(is_right)
 
     def check_answer_4(self):
         btn_four_txt = self.four_btn.cget("text")
         is_right = self.quiz.check_answer(btn_four_txt)
+        if is_right:
+            self.playsound_true()
+        else:
+            self.playsound_false()
         self.give_feedback(is_right)
+
+    def playsound_false(self):
+        mixer.music.load(self.false_sound_asset_path)
+        mixer.music.play()
+
+    def playsound_true(self):
+        mixer.music.load(self.true_sound_asset_path)
+        mixer.music.play()
