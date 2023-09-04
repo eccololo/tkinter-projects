@@ -1,8 +1,6 @@
 from tkinter import *
 from tkinter.ttk import *
-from tkinter import messagebox
 from idlelib.tooltip import Hovertip
-from playsound import playsound
 from quiz_brain import QuizBrain
 import settings
 import random
