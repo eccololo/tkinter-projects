@@ -39,13 +39,13 @@ class QuizModeInterface:
     def set_hard_mode(self):
         settings.MODE = "hard"
         settings.API_DATA_TYPE = "multiple"
-        settings.API_DATA_AMOUNT = 50
+        settings.API_DATA_AMOUNT = 24
         self.root.destroy()
 
     def set_easy_mode(self):
         settings.MODE = "easy"
         settings.API_DATA_TYPE = "boolean"
-        settings.API_DATA_AMOUNT = 20
+        settings.API_DATA_AMOUNT = 12
         self.root.destroy()
 
 

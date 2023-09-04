@@ -1,4 +1,3 @@
 TODO:
     1. Create parent class for tKinter window.
     2. Inherit from tKinter parent class in easy and difficult mode classes.
-    5. Add sounds.
