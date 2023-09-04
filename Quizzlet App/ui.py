@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
+from idlelib.tooltip import Hovertip
 from playsound import playsound
 from quiz_brain import QuizBrain
 import settings
@@ -21,12 +22,14 @@ class QuizModeInterface:
                                width=30,
                                cursor="hand2",
                                command=self.set_easy_mode)
+        self.true_btn_tooltip = Hovertip(self.true_btn, 'Easy mode has only 2 possible answers.')
         self.true_btn.grid(row=0, column=0)
 
         self.false_btn = Button(text="Hard Mode",
                                 width=30,
                                 cursor="hand2",
                                 command=self.set_hard_mode)
+        self.false_btn_tooltip = Hovertip(self.false_btn, 'Hard mode has 4 possible answers.')
         self.false_btn.grid(row=1, column=0, pady=5)
 
         self.root.mainloop()
