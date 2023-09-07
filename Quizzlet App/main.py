@@ -26,6 +26,3 @@ if settings.MODE == "easy":
     quiz_easy_ui = QuizEasyModeInterface(quiz)
 else:
     quiz_hard_ui = QuizHardModeInterface(quiz)
-
-print("You've completed the quiz")
-print(f"Your final score was: {quiz.score}/{quiz.question_number}")
